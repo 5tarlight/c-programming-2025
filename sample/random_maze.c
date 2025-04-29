@@ -1,3 +1,21 @@
+/*/////////////////////////////
+
+ 2025-04-29 김규산
+ Random Maze Generation
+ - Algorithm : Kruskal's Algorithm
+
+ 크루스칼 알고리즘은 Union-Find를 기반으로 함.
+ 전체 맵에 거대한 MST를 만드는 것으로 생각할 수 있음.
+ 다만 모든 점의 가중치가 1 이므로 PriorityQueue는 사용하지 않고
+ 진행할 수 있음.
+
+ Union-Find는 어떤 지점과 어떤 지점이 연결되었는지를 O(1)에 확인할 수 있음.
+ 어떤 지점에서 2칸 떨어진 지점을 탐색하고 Union-Find를 통해서
+ 그 지점과 현재 지점이 연결되었는지를 확인할 수 있음.
+ 만약 연결되지 않았다면 사이 벽을 부수고 같은 지점으로 통합
+
+/////////////////////////////*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -16,7 +34,6 @@ typedef struct {
 Cell maze[N][N];
 int parent[N * N];
 
-// 유니온 파인드용
 int find(int x) {
   if (parent[x] != x)
     parent[x] = find(parent[x]);
