@@ -97,7 +97,7 @@ int read_raw_key() {
 int read_key() {
   // 키를 읽고 버퍼를 비운다.
   int ch = read_raw_key();
-  flush_input();
+//  flush_input();
   return ch;
 }
 

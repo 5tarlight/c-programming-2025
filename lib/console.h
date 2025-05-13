@@ -118,12 +118,12 @@ void move_cursor(int x, int y);
  * reset하기 전까지 출력되는 모든 문자열에 영향을 준다.
  * ANSI가 지원되지 않는 환경에서는 동작하지 않을 수 있다.
  */
-void set_console_color(const char* color);
+//void set_console_color(const char* color);
 
 /**
  * 콘솔 화면의 색을 원래대로 복구한다.
  */
-void reset_console_color();
+//void reset_console_color();
 
 /**
  * 콘솔 제어를 위한 초기 설정을 한다.
@@ -136,7 +136,5 @@ void init_console();
 
 void hide_cursor();
 void show_cursor();
-
-Pair get_console_size();
 
 #endif // C_CONSOLE_H
