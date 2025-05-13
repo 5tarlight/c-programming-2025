@@ -36,7 +36,7 @@ int main() {
     int key = read_key();
     if (key == 0) continue;
     move_cursor(2, 3);
-    printf("Key Pressed: %d\n", key);
+    printf("Key Pressed: %d  \n", key);
 
     if (key == 'q')
       break;
