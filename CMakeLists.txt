@@ -3,4 +3,7 @@ project(c_programming)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(c_programming main.c)
+add_executable(c_programming main.c
+        lib/console.h lib/console.c
+        lib/util.h lib/util.c
+)
