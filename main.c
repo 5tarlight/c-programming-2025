@@ -20,7 +20,7 @@ int main() {
 
   int width = 21, height = 21;
   move_cursor(3, 3);
-  printf("너비 : %d, 높이: %d\n", width, height);
+  printf("너비 : %s%d%s, 높이: %s%d%s\n", FG_YELLOW, width, RESET, FG_YELLOW, height, RESET);
   move_cursor(3, 5);
   printf("A : 폭 감소, D : 폭 증가\n");
   move_cursor(3, 6);
@@ -58,7 +58,8 @@ int main() {
       height--;
 
     move_cursor(3, 3);
-    printf("너비 : %d, 높이: %d    ", width, height);
+    printf("너비 : %s%d%s, 높이: %s%d%s        \n",
+        FG_YELLOW, width, RESET, FG_YELLOW, height, RESET);
   }
 
   show_cursor();
