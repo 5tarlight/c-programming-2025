@@ -1,5 +1,4 @@
 #include "console.h"
-#include <conio.h>//_kbhit(23번 줄)
 
 void clear_console() {
   // 자기 운영체제에 맞는 명령어를 실행해서 콘솔 화면을 지운다.
