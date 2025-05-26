@@ -9,7 +9,8 @@ typedef struct {
   int y;
 } Pair;
 
-int min(int, int);
-int max(int, int);
+// Windows에서 min, max 함수가 이미 정의되어 있어서 이름을 바꿈
+int min_v(int, int);
+int max_v(int, int);
 
 #endif //C_PROGRAMMING_UTIL_H
