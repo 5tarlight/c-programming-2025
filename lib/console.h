@@ -11,6 +11,7 @@
  */
 #ifdef _WIN32
 #include <windows.h>
+#include <conio.h>
 /**
  * 주어진 시간(ms) 동안 대기한다.
  * Windows 운영체제에서는 Sleep 함수를 사용한다.
