@@ -449,23 +449,23 @@ int main() {
   Pair size = get_console_size();
   if (size.x == 0 || size.y == 0) {
     printf("%s", FG_RED);
-    printf("WARN : Failed to fetch console information.\n");
-    printf("Consider using other terminals.\n");
+    printf("WARN : 콘솔 크기를 읽지 못했습니다.\n");
+    printf("다른 터미널을 사용하세요.\n");
     printf("%s", RESET);
     return 0;
   }
 
-  printf("Console size: %d x %d\n", size.x, size.y);
+  printf("콘솔 크기 : %d x %d\n", size.x, size.y);
 
   int width = 21, height = 21;
   move_cursor(3, 3);
-  printf("width : %s%d%s, height: %s%d%s\n", FG_YELLOW, width, RESET, FG_YELLOW, height, RESET);
+  printf("너비 : %s%d%s, 높이: %s%d%s\n", FG_YELLOW, width, RESET, FG_YELLOW, height, RESET);
   move_cursor(3, 5);
-  printf("D, A : increase/decrease width\n");
+  printf("D, A : 너비 조절\n");
   move_cursor(3, 6);
-  printf("W, S : increase/decrease height\n");
+  printf("W, S : 높이 조절\n");
   move_cursor(3, 7);
-  printf("Q : quit, F : start\n");
+  printf("Q : 종료, F : 시작\n");
 
   while (true) {
     int key = read_key();
@@ -497,7 +497,7 @@ int main() {
       height--;
 
     move_cursor(3, 3);
-    printf("width : %s%d%s, height: %s%d%s        \n",
+    printf("너비 : %s%d%s, 높이: %s%d%s        \n",
         FG_YELLOW, width, RESET, FG_YELLOW, height, RESET);
   }
 
