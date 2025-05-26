@@ -348,12 +348,12 @@ void init_console() {
 }
 
 void hide_cursor() {
-  printf("\e[?25l");
+  printf("\x1b[?25l");
   fflush(stdout);
 }
 
 void show_cursor() {
-  printf("\e[?25h");
+  printf("\x1b[?25h");
   fflush(stdout);
 }
 
