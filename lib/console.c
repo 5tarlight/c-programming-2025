@@ -161,11 +161,13 @@ void init_console() {
 #ifdef _WIN32
   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
   SetConsoleMode(hConsole, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+  fflush(stdout);
 #else
   struct termios tty;
   tcgetattr(STDIN_FILENO, &tty);
   tty.c_lflag &= ~(ECHO);  // 입력 에코 및 버퍼링 비활성화
   tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+  fflush(stdout);
 #endif
 }
 
