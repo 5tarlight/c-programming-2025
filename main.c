@@ -176,6 +176,100 @@ void freeQueue(Queue* q);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+typedef struct {
+  int wall; // 1: 벽, 0: 길
+} Cell;
+
+typedef struct {
+  int x1, y1;
+  int x2, y2;
+} Wall;
+
+Cell **maze;
+
+void init_maze(int width, int height);
+void gen_maze(int width, int height);
+void shuffle_maze(Wall *walls, int size);
+void clean_maze();
+
+////////////////////////////////////////////////////////////////////////////////
+
+void init_maze(int width, int height) {
+  // 미로를 동적으로 할당하고 초기화한다.
+  maze = (Cell **)malloc(sizeof(Cell *) * height);
+  for (int i = 0; i < height; i++) {
+    maze[i] = (Cell *)malloc(sizeof(Cell) * width);
+    for (int j = 0; j < width; j++) {
+      maze[i][j].wall = 1; // 전체를 벽으로 초기화
+    }
+  }
+
+  // 길 위치 초기화
+  for (int i = 1; i < width; i += 2)
+    for (int j = 1; j < height; j += 2)
+      maze[i][j].wall = 0;
+}
+
+void shuffle_maze(Wall *walls, int size) {
+  // Fisher-Yates Shuffle 알고리즘을 사용하여 벽을 섞는다.
+  for (int i = size - 1; i > 0; i--) {
+    int j = rand() % (i + 1);
+    Wall temp = walls[i];
+    walls[i] = walls[j];
+    walls[j] = temp;
+  }
+}
+
+void gen_maze(int width, int height) {
+  Wall walls[width * height];
+  int wall_count = 0;
+
+  // 길과 길 사이의 벽 목록 만들기
+  for (int i = 1; i < height; i += 2) {
+    for (int j = 1; j < width; j += 2) {
+      if (i + 2 < height) // 아래
+        walls[wall_count++] = (Wall){j, i, j, i + 2};
+      if (j + 2 < width) // 오른쪽
+        walls[wall_count++] = (Wall){j, i, j + 2, i};
+    }
+  }
+
+  // 벽을 섞는다.
+  shuffle_maze(walls, wall_count);
+
+  // 유니온 파인드 초기화
+  int *parent = create_ufind(width, height);
+
+  // 벽을 제거하면서 길을 만든다.
+  for (int i = 0; i < wall_count; i++) {
+    Wall w = walls[i];
+    int x1 = w.x1, y1 = w.y1;
+    int x2 = w.x2, y2 = w.y2;
+
+    // 현재 벽이 연결하는 두 셀의 루트 노드를 찾는다.
+    int root1 = find(parent, y1 * width + x1);
+    int root2 = find(parent, y2 * width + x2);
+
+    // 두 셀이 서로 다른 루트 노드를 가지면 길을 만든다.
+    if (root1 != root2) {
+      unite(parent, y1 * width + x1, y2 * width + x2);
+      maze[(x1 + x2) / 2][(y1 + y2) / 2].wall = 0; // 중간 벽 제거
+    }
+  }
+
+  maze[0][1].wall = 0; // 시작점
+  maze[height - 1][width - 2].wall = 0; // 끝점
+}
+
+void clean_maze() {
+  for (int i = 0; maze[i] != NULL; i++) {
+    free(maze[i]);
+  }
+  free(maze);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void clear_console() {
   // 자기 운영체제에 맞는 명령어를 실행해서 콘솔 화면을 지운다.
   // 또는 ANSI Escape Code를 사용할 수도 있다.
@@ -500,6 +594,25 @@ int main() {
     printf("너비 : %s%d%s, 높이: %s%d%s        \n",
         FG_YELLOW, width, RESET, FG_YELLOW, height, RESET);
   }
+
+  // Setup done. Start game procedures.
+  init_maze(width, height);
+  gen_maze(width, height);
+
+  clear_console();
+  move_cursor(0, 0);
+  for (int i = 0; i < height; i++) {
+    for (int j = 0; j < width; j++) {
+      if (maze[i][j].wall) {
+        printf("#");
+      } else {
+        printf(" ");
+      }
+    }
+    printf("\n");
+  }
+
+  clean_maze();
 
   show_cursor();
   return 0;
