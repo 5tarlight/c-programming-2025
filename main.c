@@ -196,7 +196,7 @@ void clean_maze();
 ////////////////////////////////////////////////////////////////////////////////
 
 int is_end(int x, int y, int width, int height) {
-  return (x == width - 1 && y == height - 2);
+  return (x == width - 2 && y == height - 1);
 }
 
 int can_move(int nx, int ny, int width, int height) {
@@ -656,6 +656,7 @@ int main() {
   // Main Game Logic
   int x = 1, y = 0; // 시작 위치
   time_t start_time = time(NULL);
+  int move_count = 0;
   while (!is_end(x, y, width, height)) {
     move_cursor(x, y);
     printf("%s@", FG_GREEN); // 현재 위치 표시
@@ -675,7 +676,15 @@ int main() {
     printf("%s ", FG_WHITE); // 빈 공간으로 표시
     x = next_pos.x;
     y = next_pos.y;
+    move_count++;
   }
+
+  time_t end_time = time(NULL);
+  clear_console();
+  move_cursor(1, 1);
+  printf("%s미로를 탈출했습니다!%s\n", FG_CYAN, RESET);
+  move_cursor(1, 2);
+  printf("소요 시간: %ld초, 이동 횟수: %d\n", end_time - start_time, move_count);
 
   clean_maze();
   show_cursor();
