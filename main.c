@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define true 1
 #define false 0
@@ -194,6 +195,46 @@ void clean_maze();
 
 ////////////////////////////////////////////////////////////////////////////////
 
+int is_end(int x, int y, int width, int height) {
+  return (x == width - 1 && y == height - 2);
+}
+
+int can_move(int nx, int ny, int width, int height) {
+  if (nx < 0 || nx >= width || ny < 0 || ny >= height)
+    return 0;
+
+  return maze[ny][nx].wall == 0;
+}
+
+int is_valid_input(int key) {
+  return key == KEY_UP || key == KEY_DOWN ||
+         key == KEY_LEFT || key == KEY_RIGHT ||
+         key == 'w' || key == 'W' ||
+         key == 'a' || key == 'A' ||
+         key == 's' || key == 'S' ||
+         key == 'd' || key == 'D';
+}
+
+Pair get_next_position(int x, int y, int key) {
+  // 방향키 또는 WASD 키에 따라 다음 위치를 계산한다.
+  switch (key) {
+    case KEY_UP: case 'w': case 'W':
+      return (Pair){x, y - 1};
+    case KEY_DOWN: case 's': case 'S':
+      return (Pair){x, y + 1};
+    case KEY_LEFT: case 'a': case 'A':
+      return (Pair){x - 1, y};
+    case KEY_RIGHT: case 'd': case 'D':
+      return (Pair){x + 1, y};
+    default:
+      return (Pair){x, y}; // 실행되지 않을 부분
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 void init_maze(int width, int height) {
   // 미로를 동적으로 할당하고 초기화한다.
   maze = (Cell **)malloc(sizeof(Cell *) * height);
@@ -205,9 +246,9 @@ void init_maze(int width, int height) {
   }
 
   // 길 위치 초기화
-  for (int i = 1; i < width; i += 2)
-    for (int j = 1; j < height; j += 2)
-      maze[i][j].wall = 0;
+  for (int y = 1; y < height; y += 2)
+    for (int x = 1; x < width; x += 2)
+      maze[y][x].wall = 0;
 }
 
 void shuffle_maze(Wall *walls, int size) {
@@ -253,7 +294,7 @@ void gen_maze(int width, int height) {
     // 두 셀이 서로 다른 루트 노드를 가지면 길을 만든다.
     if (root1 != root2) {
       unite(parent, y1 * width + x1, y2 * width + x2);
-      maze[(x1 + x2) / 2][(y1 + y2) / 2].wall = 0; // 중간 벽 제거
+      maze[(x1 + x2) / 2][(y1 + y2) / 2].wall = 0;
     }
   }
 
@@ -612,8 +653,31 @@ int main() {
     printf("\n");
   }
 
-  clean_maze();
+  // Main Game Logic
+  int x = 1, y = 0; // 시작 위치
+  time_t start_time = time(NULL);
+  while (!is_end(x, y, width, height)) {
+    move_cursor(x, y);
+    printf("%s@", FG_GREEN); // 현재 위치 표시
 
+    int key;
+    Pair next_pos;
+    do {
+      key = read_key();
+      next_pos = get_next_position(x, y, key);
+    } while (
+        !is_valid_input(key) ||
+        !can_move(next_pos.x, next_pos.y, width, height)
+    );
+
+    // 현재 위치를 비운다.
+    move_cursor(x, y);
+    printf("%s ", FG_WHITE); // 빈 공간으로 표시
+    x = next_pos.x;
+    y = next_pos.y;
+  }
+
+  clean_maze();
   show_cursor();
   return 0;
 }

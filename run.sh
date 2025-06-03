@@ -1,6 +1,9 @@
 # Check if the build directory exists
 if [ ! -d "build" ]; then
   mkdir build
+else
+  rm -rf build
+  mkdir build
 fi
 
 # Navigate to the build directory
