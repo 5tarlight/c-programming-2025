@@ -294,7 +294,7 @@ void gen_maze(int width, int height) {
     // 두 셀이 서로 다른 루트 노드를 가지면 길을 만든다.
     if (root1 != root2) {
       unite(parent, y1 * width + x1, y2 * width + x2);
-      maze[(x1 + x2) / 2][(y1 + y2) / 2].wall = 0;
+      maze[(y1 + y2) / 2][(x1 + x2) / 2].wall = 0;
     }
   }
 
