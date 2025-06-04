@@ -751,7 +751,13 @@ int main() {
     move_cursor(1, 1);
     printf("%s미로를 탈출했습니다!%s\n", FG_CYAN, RESET);
     move_cursor(1, 2);
-    printf("소요 시간: %ld초, 이동 횟수: %d(%d)\n", end_time - start_time, move_count, shortest);
+    time_t taken = end_time - start_time;
+    printf("소요 시간: %ld초, 이동 횟수: %d(%d)\n", taken, move_count, shortest);
+
+    int score = 100 * ((double)taken / shortest) + move_count - shortest;
+
+    move_cursor(1, 3);
+    printf("점수: %s%d%s\n", FG_GREEN, score, RESET);
 
     do {
       key = read_key();
