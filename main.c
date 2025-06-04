@@ -19,16 +19,11 @@ int max_v(int, int);
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * 운영체제마다 사용할 수 있는 헤더가 다르기 때문에
- * 각 운영체제에 맞는 헤더를 include 한다.
- */
 #ifdef _WIN32
 #include <windows.h>
 #include <conio.h>
 /**
  * 주어진 시간(ms) 동안 대기한다.
- * Windows 운영체제에서는 Sleep 함수를 사용한다.
  * @param ms 대기할 시간(ms)
  */
 #define SLEEP(ms) Sleep(ms)
@@ -39,13 +34,10 @@ int max_v(int, int);
 #include <sys/ioctl.h>
 /**
  * 주어진 시간(ms) 동안 대기한다.
- * UNIX 계열 운영체제에서는 `usleep` 함수를 사용한다.
  * `usleep`은 파라미터로 마이크로초를 받기 때문에 1000을 곱해준다.
  * @param ms 대기할 시간(ms)
  */
 #define SLEEP(ms) usleep((ms) * 1000)
-// 윗 줄에서 (ms) 로 감싸는 이유는 SLEEP(10 + 20) 과 같이 사용할 때
-// 10 + 20 * 1000 = 20010 이 되는 것을 방지하기 위함이다.
 #endif
 
 // 각 운영체제마다 방향키를 나타내는 코드가 다르기 때문에
@@ -62,27 +54,11 @@ int max_v(int, int);
 
 // ANSI color escape code
 #define RESET "\033[0m"
-#define BOLD "\033[1m"
-#define UNDERLINE "\033[4m"
-#define BLINK "\033[5m"
-#define INVERSE "\033[7m"
-#define HIDDEN "\033[8m"
-#define FG_BLACK "\033[30m"
 #define FG_RED "\033[31m"
 #define FG_GREEN "\033[32m"
 #define FG_YELLOW "\033[33m"
-#define FG_BLUE "\033[34m"
-#define FG_MAGENTA "\033[35m"
 #define FG_CYAN "\033[36m"
 #define FG_WHITE "\033[37m"
-#define BG_BLACK "\033[40m"
-#define BG_RED "\033[41m"
-#define BG_GREEN "\033[42m"
-#define BG_YELLOW "\033[43m"
-#define BG_BLUE "\033[44m"
-#define BG_MAGENTA "\033[45m"
-#define BG_CYAN "\033[46m"
-#define BG_WHITE "\033[47m"
 
 /**
  * 콘솔 화면을 지운다. 운영체제에 따라 다르게 동작한다.
@@ -313,9 +289,6 @@ void clean_maze() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void clear_console() {
-  // 자기 운영체제에 맞는 명령어를 실행해서 콘솔 화면을 지운다.
-  // 또는 ANSI Escape Code를 사용할 수도 있다.
-  // https://en.wikipedia.org/wiki/ANSI_escape_code
 #ifdef _WIN32
   system("cls");
 #elif defined(__APPLE__) || defined(__linux__)
@@ -353,33 +326,17 @@ int read_raw_key() {
 
   return 0;
 #else
-  // `termios`는 UNIX 계열 운영체제에서 터미널을 제어하기 위한 구조체.
-  // `oldt`에 현재 터미널 설정을 저장하고, `newt`에 새로운 설정을 저장한다.
-  // 프로그램이 종료되면 `oldt`로 설정을 복구할 수 있다.
   struct termios oldt, newt;
   int ch;
 
-  // 현재 터미널 설정을 `oldt`에 저장한다.
-  // STDIN_FILENO : 표준 입력 파일 디스크립터
-  // STDIN, STDOUT, STDERR으로 각각 0, 1, 2로 정의되어 있다.
   tcgetattr(STDIN_FILENO, &oldt);
-  // `newt`에 `oldt`를 복사한다.
-  // `termios` 구조체의 데이터는 전부 비트로 플래그를 관리하는 정수형 필드로
-  // 되어 있어서 단순 대입으로 복사가 가능하다.
   newt = oldt;
 
-  // ICANON : 정규(non-canonical) 모드. 입력을 한 줄 단위로 받는다.
-  // ECHO : 입력한 문자를 화면에 출력한다.
-  // 위 두 플래그를 해제하면 입력을 즉시 받을 수 있다.
   newt.c_lflag &= ~(ICANON | ECHO);
   // 새로운 설정을 적용한다.
   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-  // F_GETFL : 파일 상태 플래그를 가져온다.
   int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
-  // O_NONBLOCK : 블록킹 모드를 해제한다.
-  // F_SETFL : 파일 상태 플래그를 설정한다.
-  // 마찬가지로 비트 연산을 통해 플래그를 설정한다.
   fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 
   ch = getchar();
@@ -415,7 +372,6 @@ int read_key() {
 
 void flush_input() {
 #ifdef _WIN32
-  // 입력 버퍼에 데이터가 남아있으면 계속 읽어서 버퍼를 비운다.
   while (_kbhit())
     _getch();
 #else
@@ -435,16 +391,11 @@ void flush_input() {
 
 Pair get_console_size() {
 #ifdef _WIN32
-  // Console Screen Buffer Info를 가져와서 현재 콘솔의 크기를 구한다.
   CONSOLE_SCREEN_BUFFER_INFO csbi;
   GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
 
   int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
   int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-
-  // Pair 구조체에 너비와 높이를 저장해서 반환한다.
-  // Pair는 typedef로 정의되어 있기 때문에 아래 코드는
-  // `(struct ...) { ... }`와 같은 형태로 해석된다.
   return (Pair){ width, height };
 #else
   struct winsize w;
@@ -458,8 +409,6 @@ Pair get_console_size() {
 void move_cursor(int x, int y) {
 #ifdef _WIN32
   COORD pos = { x, y };
-  // 콘솔 화면의 커서를 이동시킨다.
-  // GetStdHandle : 표준 출력 장치의 핸들을 가져온다.
   SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 #else
   // ANSI Escape Code를 사용해서 커서를 이동시킨다.
@@ -619,6 +568,34 @@ int find_shortest_path(int width, int height) {
 
 ////////////////////////////////////////////////////////////////////
 
+int play_count = 0;
+int* scores;
+
+void add_score(int score) {
+  int *temp = (int *)malloc(sizeof(int) * (play_count + 1));
+  for (int i = 0; i < play_count; i++)
+    temp[i] = scores[i];
+  temp[play_count] = score;
+  play_count++;
+  free(scores);
+  scores = temp;
+}
+
+void sort_scores() {
+  // Bubble Sort
+  for (int i = 0; i < play_count - 1; i++) {
+    for (int j = i + 1; j < play_count; j++) {
+      if (scores[i] < scores[j]) {
+        int temp = scores[i];
+        scores[i] = scores[j];
+        scores[j] = temp;
+      }
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+
 int main() {
   init_console();
   clear_console();
@@ -691,7 +668,11 @@ int main() {
 
     move_cursor(1, 6);
     printf("랭킹");
-    // TODO : Print Rank
+    sort_scores();
+    for (int i = 0; i < play_count; i++) {
+      move_cursor(1, 7 + i);
+      printf("%d위 : %s%d%s\n", i + 1, FG_GREEN, scores[i], RESET);
+    }
 
     int key;
     do {
@@ -754,10 +735,14 @@ int main() {
     time_t taken = end_time - start_time;
     printf("소요 시간: %ld초, 이동 횟수: %d(%d)\n", taken, move_count, shortest);
 
-    int score = 1000 * ((double)taken / shortest) + 100 * (move_count - shortest);
+    double time_score = 1500.0 * (shortest / (double)taken);      // 시간 기준 점수
+    double move_score = 1500.0 * (shortest / (double)move_count); // 이동 기준 점수
+
+    int score = (int)(time_score + move_score);
 
     move_cursor(1, 3);
     printf("점수: %s%d%s\n", FG_GREEN, score, RESET);
+    add_score(score);
 
     do {
       key = read_key();
