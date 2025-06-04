@@ -239,7 +239,7 @@ void shuffle_maze(Wall *walls, int size) {
 }
 
 void gen_maze(int width, int height) {
-  Wall walls[width * height];
+  Wall *walls = (Wall *)malloc(sizeof(Wall) * width * height);
   int wall_count = 0;
 
   // 길과 길 사이의 벽 목록 만들기
@@ -274,6 +274,8 @@ void gen_maze(int width, int height) {
       maze[(y1 + y2) / 2][(x1 + x2) / 2].wall = 0;
     }
   }
+
+  free(walls);
 
   maze[0][1].wall = 0; // 시작점
   maze[height - 1][width - 2].wall = 0; // 끝점
