@@ -282,12 +282,10 @@ void gen_maze(int width, int height) {
 }
 
 void clean_maze(int width, int height) {
-  void clean_maze() {
-    for (int i = 0; i < maze_height; i++) {
-      free(maze[i]);
-    }
-    free(maze);
+  for (int i = 0; i < height; i++) {
+    free(maze[i]);
   }
+  free(maze);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
