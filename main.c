@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define true 1
 #define false 0
@@ -576,6 +577,48 @@ void freeQueue(Queue* q) {
 
 ////////////////////////////////////////////////////////////////////
 
+int find_shortest_path(int width, int height) {
+  Queue q;
+  initQueue(&q);
+
+  int x = 1, y = 0;
+  enqueue(&q, y * width + x);
+
+  int visited[height][width];
+  memset(visited, -1, sizeof(visited));
+
+  visited[y][x] = 0; // 시작 위치 방문 표시
+  int dx[] = {0, 0, -1, 1};
+  int dy[] = {-1, 1, 0, 0};
+
+  while (!isEmpty(&q)) {
+    int pos = dequeue(&q);
+    y = pos / width;
+    x = pos % width;
+
+    // 도착 지점에 도달했는지 확인
+    if (x == width - 2 && y == height - 1) {
+      return visited[y][x];
+    }
+
+    // 상하좌우로 이동
+    for (int i = 0; i < 4; i++) {
+      int nx = x + dx[i];
+      int ny = y + dy[i];
+
+      if (nx >= 0 && nx < width && ny >= 0 && ny < height &&
+          maze[ny][nx].wall == 0 && visited[ny][nx] == -1) {
+        visited[ny][nx] = visited[y][x] + 1;
+        enqueue(&q, ny * width + nx);
+      }
+    }
+  }
+
+  return -1; // 도착 지점에 도달하지 못한 경우, 실행되지 않음
+}
+
+////////////////////////////////////////////////////////////////////
+
 int main() {
   init_console();
   clear_console();
@@ -703,10 +746,16 @@ int main() {
 
     time_t end_time = time(NULL);
     clear_console();
+    int shortest = find_shortest_path(width, height);
+
     move_cursor(1, 1);
     printf("%s미로를 탈출했습니다!%s\n", FG_CYAN, RESET);
     move_cursor(1, 2);
-    printf("소요 시간: %ld초, 이동 횟수: %d\n", end_time - start_time, move_count);
+    printf("소요 시간: %ld초, 이동 횟수: %d(%d)\n", end_time - start_time, move_count, shortest);
+
+    do {
+      key = read_key();
+    } while (key == 0);
 
     clean_maze();
   }
