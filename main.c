@@ -281,11 +281,13 @@ void gen_maze(int width, int height) {
   maze[height - 1][width - 2].wall = 0; // 끝점
 }
 
-void clean_maze() {
-  for (int i = 0; maze[i] != NULL; i++) {
-    free(maze[i]);
+void clean_maze(int width, int height) {
+  void clean_maze() {
+    for (int i = 0; i < maze_height; i++) {
+      free(maze[i]);
+    }
+    free(maze);
   }
-  free(maze);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -578,6 +580,7 @@ int find_shortest_path(int width, int height) {
       free(visited[i]);
   }
   free(visited);
+  freeQueue(&q);
   return -1; // 도착 지점에 도달하지 못한 경우, 실행되지 않음
 }
 
@@ -763,7 +766,7 @@ int main() {
       key = read_key();
     } while (key == 0);
 
-    clean_maze();
+    clean_maze(width, height);
   }
 
   show_cursor();
