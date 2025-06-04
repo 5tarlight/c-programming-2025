@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # Check if the build directory exists
 if [ ! -d "build" ]; then
   mkdir build
@@ -16,7 +18,7 @@ cmake .. || { echo "CMake configuration failed"; exit 1; }
 make || { echo "Build failed"; exit 1; }
 
 # Run the program
-read -n 1 -s -r -p "Press any key to continue..."
+#read -n 1 -s -r -p "Press any key to continue..."
 ./c_programming || { echo "Program execution failed"; exit 1; }
 
 # Clean up the build directory

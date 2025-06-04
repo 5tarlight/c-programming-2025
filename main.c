@@ -636,57 +636,81 @@ int main() {
         FG_YELLOW, width, RESET, FG_YELLOW, height, RESET);
   }
 
-  // Setup done. Start game procedures.
-  init_maze(width, height);
-  gen_maze(width, height);
+  while (true) {
+    // Game menu
+    clear_console();
+    move_cursor(1, 1);
+    printf("%sM%sA%sZ%sE %sRunner\n", FG_CYAN, FG_WHITE, FG_YELLOW, FG_GREEN, RESET);
+    move_cursor(1, 3);
+    printf("F : %s새 게임 시작%s\n", FG_GREEN, RESET);
+    move_cursor(1, 4);
+    printf("Q : %s종료%s\n", FG_RED, RESET);
 
-  clear_console();
-  move_cursor(0, 0);
-  for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
-      if (maze[i][j].wall) {
-        printf("#");
-      } else {
-        printf(" ");
-      }
-    }
-    printf("\n");
-  }
-
-  // Main Game Logic
-  int x = 1, y = 0; // 시작 위치
-  time_t start_time = time(NULL);
-  int move_count = 0;
-  while (!is_end(x, y, width, height)) {
-    move_cursor(x, y);
-    printf("%s@", FG_GREEN); // 현재 위치 표시
+    move_cursor(1, 6);
+    printf("랭킹");
+    // TODO : Print Rank
 
     int key;
-    Pair next_pos;
     do {
       key = read_key();
-      next_pos = get_next_position(x, y, key);
-    } while (
-        !is_valid_input(key) ||
-        !can_move(next_pos.x, next_pos.y, width, height)
-    );
+    } while (key != 'f' && key != 'F' && key != 'q' && key != 'Q');
 
-    // 현재 위치를 비운다.
-    move_cursor(x, y);
-    printf("%s ", FG_WHITE); // 빈 공간으로 표시
-    x = next_pos.x;
-    y = next_pos.y;
-    move_count++;
+    if (key == 'q' || key == 'Q')
+      break;
+
+    // Start new game
+    init_maze(width, height);
+    gen_maze(width, height);
+
+    clear_console();
+    move_cursor(0, 0);
+    for (int i = 0; i < height; i++) {
+      for (int j = 0; j < width; j++) {
+        if (maze[i][j].wall) {
+          printf("#");
+        } else {
+          printf(" ");
+        }
+      }
+      printf("\n");
+    }
+
+    // Main Game Logic
+    int x = 1, y = 0; // 시작 위치
+    time_t start_time = time(NULL);
+    int move_count = 0;
+    while (!is_end(x, y, width, height)) {
+      move_cursor(x, y);
+      printf("%s@", FG_GREEN); // 현재 위치 표시
+
+      int key;
+      Pair next_pos;
+      do {
+        key = read_key();
+        next_pos = get_next_position(x, y, key);
+      } while (
+          !is_valid_input(key) ||
+          !can_move(next_pos.x, next_pos.y, width, height)
+          );
+
+      // 현재 위치를 비운다.
+      move_cursor(x, y);
+      printf("%s ", FG_WHITE); // 빈 공간으로 표시
+      x = next_pos.x;
+      y = next_pos.y;
+      move_count++;
+    }
+
+    time_t end_time = time(NULL);
+    clear_console();
+    move_cursor(1, 1);
+    printf("%s미로를 탈출했습니다!%s\n", FG_CYAN, RESET);
+    move_cursor(1, 2);
+    printf("소요 시간: %ld초, 이동 횟수: %d\n", end_time - start_time, move_count);
+
+    clean_maze();
   }
 
-  time_t end_time = time(NULL);
-  clear_console();
-  move_cursor(1, 1);
-  printf("%s미로를 탈출했습니다!%s\n", FG_CYAN, RESET);
-  move_cursor(1, 2);
-  printf("소요 시간: %ld초, 이동 횟수: %d\n", end_time - start_time, move_count);
-
-  clean_maze();
   show_cursor();
   return 0;
 }
