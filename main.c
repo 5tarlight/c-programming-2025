@@ -762,9 +762,12 @@ int main() {
     printf("점수: %s%d%s\n", FG_GREEN, score, RESET);
     add_score(score);
 
+    move_cursor(1, 5);
+    printf("계속하려면 F 키를 누르세요.\n");
+
     do {
       key = read_key();
-    } while (key == 0);
+    } while (key == 0 || key != 'f' && key != 'F');
 
     clean_maze(width, height);
   }
