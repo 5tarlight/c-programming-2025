@@ -533,8 +533,12 @@ int find_shortest_path(int width, int height) {
   int x = 1, y = 0;
   enqueue(&q, y * width + x);
 
-  int visited[height][width];
-  memset(visited, -1, sizeof(visited));
+  int **visited = (int **)malloc(sizeof(int *) * height);
+  for (int i = 0; i < height; i++) {
+      visited[i] = (int *)malloc(sizeof(int) * width);
+      for (int j = 0; j < width; j++)
+          visited[i][j] = -1;
+  }
 
   visited[y][x] = 0; // 시작 위치 방문 표시
   int dx[] = {0, 0, -1, 1};
@@ -547,7 +551,12 @@ int find_shortest_path(int width, int height) {
 
     // 도착 지점에 도달했는지 확인
     if (x == width - 2 && y == height - 1) {
-      return visited[y][x];
+      int result = visited[y][x];
+      for (int i = 0; i < height; i++) {
+          free(visited[i]);
+      }
+      free(visited);
+      return result;
     }
 
     // 상하좌우로 이동
@@ -563,6 +572,10 @@ int find_shortest_path(int width, int height) {
     }
   }
 
+  for (int i = 0; i < height; i++) {
+      free(visited[i]);
+  }
+  free(visited);
   return -1; // 도착 지점에 도달하지 못한 경우, 실행되지 않음
 }
 
