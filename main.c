@@ -754,7 +754,7 @@ int main() {
     time_t taken = end_time - start_time;
     printf("소요 시간: %ld초, 이동 횟수: %d(%d)\n", taken, move_count, shortest);
 
-    int score = 100 * ((double)taken / shortest) + move_count - shortest;
+    int score = 1000 * ((double)taken / shortest) + 100 * (move_count - shortest);
 
     move_cursor(1, 3);
     printf("점수: %s%d%s\n", FG_GREEN, score, RESET);
