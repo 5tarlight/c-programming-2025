@@ -767,7 +767,7 @@ int main() {
 
     do {
       key = read_key();
-    } while (key == 0 || key != 'f' && key != 'F');
+    } while (key != 'f' && key != 'F');
 
     clean_maze(width, height);
   }
