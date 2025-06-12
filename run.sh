@@ -10,6 +10,7 @@ fi
 
 # Copy the resources to the build directory
 cp bgm.wav build/ || { echo "Failed to copy bgm.wav"; exit 1; }
+cp escape.wav build/ || { echo "Failed to copy escape.wav"; exit 1; }
 
 # Navigate to the build directory
 cd build || { echo "Failed to navigate to the build directory"; exit 1; }

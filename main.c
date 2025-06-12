@@ -19,18 +19,30 @@
 void play_bgm() {
 #ifdef _WIN32
   PlaySound("bgm.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-#else
+#elif defined(__APPLE__)
   system("afplay bgm.wav &"); // macOS
-  // system("aplay bgm.wav &"); // Linux
+#elif defined(__linux__)
+  system("aplay bgm.wav &"); // Linux
+#endif
+}
+
+void play_escape() {
+#ifdef _WIN32
+  PlaySound("escape.wav", NULL, SND_FILENAME | SND_ASYNC);
+#elif defined(__APPLE__)
+  system("afplay escape.wav &"); // macOS
+#elif defined(__linux__)
+  system("aplay escape.wav &"); // Linux
 #endif
 }
 
 void stop_bgm() {
 #ifdef _WIN32
   PlaySound(NULL, 0, 0); // Stop sound
-#else
+#elif defined(__APPLE__)
   system("killall afplay"); // Stop macOS playback
-  // system("killall aplay"); // Stop Linux playback
+#elif defined(__linux__)
+  system("pkill aplay"); // Stop Linux playback
 #endif
 }
 
@@ -777,6 +789,7 @@ int main() {
     clear_console();
     int shortest = find_shortest_path(width, height);
 
+    play_escape();
     move_cursor(1, 1);
     printf("%s미로를 탈출했습니다!%s\n", FG_CYAN, RESET);
     move_cursor(1, 2);
