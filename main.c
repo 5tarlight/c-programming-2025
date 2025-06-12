@@ -98,7 +98,6 @@ int max_v(int, int);
 #define FG_GREEN "\033[32m"
 #define FG_YELLOW "\033[33m"
 #define FG_CYAN "\033[36m"
-#define FG_WHITE "\033[37m"
 
 /**
  * 콘솔 화면을 지운다. 운영체제에 따라 다르게 동작한다.
@@ -718,7 +717,7 @@ int main() {
     // Game menu
     clear_console();
     move_cursor(1, 1);
-    printf("%sM%sA%sZ%sE %sRunner\n", FG_CYAN, FG_WHITE, FG_YELLOW, FG_GREEN, RESET);
+    printf("%sM%sA%sZ%sE %sRunner\n", FG_CYAN, RESET, FG_YELLOW, FG_GREEN, RESET);
     move_cursor(1, 3);
     printf("F : %s새 게임 시작%s\n", FG_GREEN, RESET);
     move_cursor(1, 4);
@@ -778,7 +777,7 @@ int main() {
 
       // 현재 위치를 비운다.
       move_cursor(x, y);
-      printf("%s ", FG_WHITE); // 빈 공간으로 표시
+      printf("%s ", RESET); // 빈 공간으로 표시
       x = next_pos.x;
       y = next_pos.y;
       move_count++;
