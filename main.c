@@ -1,3 +1,13 @@
+#ifdef _WIN32
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+#endif
+
+#ifdef _WIN32
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -5,6 +15,24 @@
 
 #define true 1
 #define false 0
+
+void play_bgm() {
+#ifdef _WIN32
+  PlaySound("bgm.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+#else
+  system("afplay bgm.wav &"); // macOS
+  // system("aplay bgm.wav &"); // Linux
+#endif
+}
+
+void stop_bgm() {
+#ifdef _WIN32
+  PlaySound(NULL, 0, 0); // Stop sound
+#else
+  system("killall afplay"); // Stop macOS playback
+  // system("killall aplay"); // Stop Linux playback
+#endif
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -168,7 +196,7 @@ Cell **maze;
 void init_maze(int width, int height);
 void gen_maze(int width, int height);
 void shuffle_maze(Wall *walls, int size);
-void clean_maze();
+void clean_maze(int width, int height);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -721,6 +749,7 @@ int main() {
     int x = 1, y = 0; // 시작 위치
     time_t start_time = time(NULL);
     int move_count = 0;
+    play_bgm();
     while (!is_end(x, y, width, height)) {
       move_cursor(x, y);
       printf("%s@", FG_GREEN); // 현재 위치 표시
@@ -744,6 +773,7 @@ int main() {
     }
 
     time_t end_time = time(NULL);
+    stop_bgm();
     clear_console();
     int shortest = find_shortest_path(width, height);
 
@@ -772,6 +802,7 @@ int main() {
     clean_maze(width, height);
   }
 
+  stop_bgm();
   show_cursor();
   return 0;
 }
