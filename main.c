@@ -3,11 +3,6 @@
 #pragma comment(lib, "winmm.lib")
 #endif
 
-#ifdef _WIN32
-#include <mmsystem.h>
-#pragma comment(lib, "winmm.lib")
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
