@@ -14,7 +14,7 @@
 
 void play_bgm() {
 #ifdef _WIN32
-  PlaySound("bgm.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+  PlaySound(TEXT("bgm.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 #elif defined(__APPLE__)
   system("afplay bgm.wav &"); // macOS
 #elif defined(__linux__)
@@ -24,7 +24,7 @@ void play_bgm() {
 
 void play_escape() {
 #ifdef _WIN32
-  PlaySound("escape.wav", NULL, SND_FILENAME | SND_ASYNC);
+  PlaySound(TEXT("escape.wav"), NULL, SND_FILENAME | SND_ASYNC);
 #elif defined(__APPLE__)
   system("afplay escape.wav &"); // macOS
 #elif defined(__linux__)
